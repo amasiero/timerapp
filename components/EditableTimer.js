@@ -3,26 +3,72 @@ import React from 'react';
 import TimerForm from './TimerForm';
 import Timer from './Timer';
 
-export default function EditableTimer({ //STATEFUL somente por conta do editFormOpen
-  id,
-  title,
-  project,
-  elapsed,
-  isRunning,
-  editFormOpen
-}) {
+export default class EditableTimer extends React.Component {
   
-  if(editFormOpen) {
-    return <TimerForm id={id} title={title} project={project} />
+  state = {
+    editFormOpen: false,
   }
 
-  return (
-    <Timer
-      id={id}
-      title={title}
-      project={project}
-      elapsed={elapsed}
-      isRunning={isRunning}
-    />
-  );
+  handleEditPress = () => {
+    this.openForm();
+  }
+
+  handleFormClose = () => {
+    this.closeForm();
+  }
+
+  handleSubmit = timer => {
+    const { onFormSubmit } = this.props;
+    onFormSubmit(timer);
+    this.closeForm();
+  }
+
+  openForm = () => {
+    this.setState({ editFormOpen: true });
+  }
+
+  closeForm = () => {
+    this.setState({ editFormOpen: false });
+  }
+
+  render() {
+    const {
+      id, 
+      title, 
+      project, 
+      elapsed, 
+      isRunning, 
+      onRemovePress, 
+      onStartPress, 
+      onStopPress
+    } = this.props;
+    const {editFormOpen} = this.state;
+
+    if(editFormOpen) {
+      return (
+        <TimerForm 
+          id={id} 
+          title={title} 
+          project={project} 
+          onFormSubmit={this.handleSubmit}
+          onFormClose={this.handleFormClose}
+        />
+      );
+    }
+  
+    return (
+      <Timer
+        id={id}
+        title={title}
+        project={project}
+        elapsed={elapsed}
+        isRunning={isRunning}
+        onEditPress={this.handleEditPress}
+        onRemovePress={onRemovePress}
+        onStartPress={onStartPress}
+        onStopPress={onStopPress}
+      />
+    );
+  }
+  
 }
